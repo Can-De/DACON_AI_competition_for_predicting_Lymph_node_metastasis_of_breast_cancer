@@ -137,3 +137,6 @@ img_data/
 # 레퍼런스, 결과 폴더
 reference/
 result/
+
+# ipython
+.ipynb_checkpoints
