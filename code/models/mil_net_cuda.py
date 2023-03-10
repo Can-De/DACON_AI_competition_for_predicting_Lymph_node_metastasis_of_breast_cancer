@@ -31,7 +31,7 @@ class MILNetImageOnly(nn.Module):
 class MILNetWithClinicalData(nn.Module):
     """Training with image and clinical data"""
 
-    def __init__(self, num_classes, backbone_name, clinical_data_size=23, expand_times=10):
+    def __init__(self, num_classes, backbone_name, clinical_data_size=23, expand_times=2):
         super().__init__()
 
         print('training with image and clinical data')
