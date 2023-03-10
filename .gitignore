@@ -140,3 +140,6 @@ result/
 
 # ipython
 .ipynb_checkpoints
+
+# json
+json
