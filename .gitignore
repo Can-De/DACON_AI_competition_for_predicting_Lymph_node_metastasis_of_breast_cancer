@@ -130,6 +130,7 @@ dmypy.json
 
 # MacOS
 .DS_Store
+*.icloud
 
 # 레퍼런스, 결과 폴더
 reference/
