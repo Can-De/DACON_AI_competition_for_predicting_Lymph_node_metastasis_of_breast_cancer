@@ -141,5 +141,7 @@ result/
 # ipython
 .ipynb_checkpoints
 
-# json
-json
+# dataset
+dataset
+result
+
