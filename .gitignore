@@ -142,6 +142,7 @@ result/
 .ipynb_checkpoints
 
 # dataset
+open.zip
 dataset
 result
 
