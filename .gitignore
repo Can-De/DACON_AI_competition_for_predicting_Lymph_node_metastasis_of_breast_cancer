@@ -143,6 +143,6 @@ result/
 
 # dataset
 open.zip
-dataset
-result
+dataset/
+result/
 
