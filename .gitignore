@@ -131,9 +131,6 @@ dmypy.json
 # MacOS
 .DS_Store
 
-# dataset
-img_data/
-
 # 레퍼런스, 결과 폴더
 reference/
 result/
@@ -143,8 +140,8 @@ result/
 
 # dataset
 open.zip
-dataset
-result
+dataset/
+result/
 
 # old_code
-code_old
+code_old/
