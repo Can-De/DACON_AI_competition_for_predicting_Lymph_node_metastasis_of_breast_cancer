@@ -11,7 +11,7 @@ class MILNetWithClinicalData(nn.Module):
     # RuntimeError: Adaptive pool MPS: If output is larger than input, output sizes must be multiples of input sizes
     # def __init__(self, num_classes, backbone_name, clinical_data_size=5, expand_times=10):
     def __init__(
-        self, num_classes, backbone_name, clinical_data_size=23, expand_times=10
+        self, num_classes, backbone_name, clinical_data_size=23, expand_times=3
     ):
         super().__init__()
 
