@@ -143,6 +143,8 @@ result/
 
 # dataset
 open.zip
-dataset/
-result/
+dataset
+result
 
+# old_code
+code_old
