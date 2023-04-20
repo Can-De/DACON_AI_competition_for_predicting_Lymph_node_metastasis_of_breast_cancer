@@ -1,33 +1,74 @@
-# AI competition for predicting Lymph node metastasis of breast cancer (DACON_유방암의 임파선 전이 예측 AI 경진대회)
-Predicting Axillary Lymph Node Metastasis in Early Breast Cancer Using Deep Learning on Primary Tumor Biopsy Slides ![visitors](https://visitor-badge.glitch.me/badge?page_id=bupt-ai-cz.BALNMP)
+# AI competition for predicting Lymph node metastasis of breast cancer ([DACON_유방암의 임파선 전이 예측 AI 경진대회](https://dacon.io/competitions/official/236011/overview/description))
 
-[Grand-Challenge](https://bcnb.grand-challenge.org/) | [Arxiv](https://arxiv.org/abs/2112.02222) | [Dataset Page](https://bupt-ai-cz.github.io/BCNB/) | [![Tweet](https://img.shields.io/twitter/url/http/shields.io.svg?style=social)](https://twitter.com/intent/tweet?text=Codes%20and%20Data%20for%20Our%20Paper:%20"Predicting%20Axillary%20Lymph%20Node%20Metastasis%20in%20Early%20Breast%20Cancer"%20&url=https://github.com/bupt-ai-cz/BALNMP)
+## [배경]
 
-This repo is the official implementation of our paper "Predicting Axillary Lymph Node Metastasis in Early Breast Cancer Using Deep Learning on Primary Tumor Biopsy Slides".
+- 림프절(임파선)은 암의 전이, 암이 퍼지는 데 매우 치명적인 역할을 합니다.
 
-Our paper is accepted by [Frontiers in Oncology](https://www.frontiersin.org/articles/10.3389/fonc.2021.759007/full), and you can also get access our paper from [Arxiv](https://arxiv.org/abs/2112.02222) or [MedRxiv](https://www.medrxiv.org/content/10.1101/2021.10.10.21264721).
+  병원에서 암 진단을 받았을 때 가장 많이 듣는 말이자 우리가 관심을 가져야 하는 것이 림프절 전이이며, 
 
-## News
-- We launched a [Grand Challenge: BCNB](https://bcnb.grand-challenge.org/) to promote relevant research.
-- We released our data. Please visit [homepage](https://bupt-ai-cz.github.io/BCNB/) to get the downloading information.
-- Paper codes are released, please see [code](./code) for more details.
+  이러한 림프절 전이 여부에 따라 치료와 예후가 달라집니다.
 
-## Abstrac
+  따라서 림프절 전이 여부와 전이 단계를 파악하는 것이 암을 치료하고 진단하는 것에 있어서 매우 핵심적인 역할을 합니다.
 
-- Objectives: To develop and validate a deep learning (DL)-based primary tumor biopsy signature for predicting axillary lymph node (ALN) metastasis preoperatively in early breast cancer (EBC) patients with clinically negative ALN.
+- 이번 '유방암의 임파선 전이 예측 AI경진대회'에서 유방암 병리 슬라이드 영상과 임상 항목 데이터를 이용하여,
 
-- Methods: A total of 1,058 EBC patients with pathologically confirmed ALN status were enrolled from May 2010 to August 2020. A DL core-needle biopsy (DL-CNB) model was built on the attention-based multiple instance-learning (AMIL) framework to predict ALN status utilizing the DL features, which were extracted from the cancer areas of digitized whole-slide images (WSIs) of breast CNB specimens annotated by two pathologists. Accuracy, sensitivity, specificity, receiver operating characteristic (ROC) curves, and areas under the ROC curve (AUCs) were analyzed to evaluate our model.
+  유방암 치료에 핵심적인 역할을 할 수 있는 최적의 AI 모델을 만들어 유방암의 임파선 전이 여부를 예측해 보고자 합니다.
 
-- Results: The best-performing DL-CNB model with VGG16_BN as the feature extractor achieved an AUC of 0.816 (95% confidence interval (CI): 0.758, 0.865) in predicting positive ALN metastasis in the independent test cohort. Furthermore, our model incorporating the clinical data, which was called DL-CNB+C, yielded the best accuracy of 0.831 (95% CI: 0.775, 0.878), especially for patients younger than 50 years (AUC: 0.918, 95% CI: 0.825, 0.971). The interpretation of DL-CNB model showed that the top signatures most predictive of ALN metastasis were characterized by the nucleus features including density (*p* = 0.015), circumference (*p* = 0.009), circularity (*p* = 0.010), and orientation (*p* = 0.012).
+## [주최 / 주관]
 
-- Conclusion: Our study provides a novel DL-based biomarker on primary tumor CNB slides to predict the metastatic status of ALN preoperatively for patients with EBC.
+- 주최 : 연세대학교 의과대학, JLK, MTS
+- 후원 : 보건산업진흥원
+- 주관 : 데이콘
 
-## Setup
+## [모델링]
+
+- Attention-based multiple instance-learning (AMIL) 방식 적용
+  - 여러 개의 인스턴스(샘플)로 이루어진 가방(bag) 데이터 셋트를 분류하는 머신러닝 알고리즘입니다.
+  - 가방 데이터 세트의 인스턴스중 일부는 양(positive) 클래스에 속하고, 일부 인스턴스는 음(negative) 클래스에 속합니다.
+  - 가방의 각 인스턴스를 독립적으로 분류하는 것이 아니라, 전체 가방 데이터 세트를 분류합니다.
+  - MIL은 의학 분야를 비롯한 다양한 분야에서 사용되는 유용한 머신러닝 기술 중 하나입니다.
+- 적용 조건
+  - 각 Patch의 크기는 128*128 픽셀로 Crop합니다.
+  - GRAYSCALE 값이 240 이하인 펙셀의 비율이 70% 이상인 Patch만 사용합니다.
+  - 각 가방에는 10개의 Patch를 담습니다.
+  - 각 환자의 최소 가방 수는 10개로 부족한 Patch는 해당 환자의 Patch를 증식하여 사용합니다.
+
+## [구현 세부 정보]
+데이터 준비
+각 가방의 patch 갯수(N)는 10으로 고정되어 있지만, 각 WSI의 가방 번호(M)는 고정되어 있지 않으며 WSI의 해상도에 따라 달라집니다. 통계 결과에 따르면 WSI의 백 번호(M)는 1에서 300까지 다양하며, 훈련 및 테스트 중에 WSI에 대해 고정되지 않습니다. 데이터 세트 준비 과정은 다음 그림과 같으며, 자세한 내용은 다음과 같습니다:
+<div align="center">
+    <img src="imgs/a.png" alt="c"/>
+</div>
+
+먼저 각 WSI에 대해 주석이 달린 종양 영역을 잘라내고, 한 WSI에 여러 개의 주석이 달린 종양 영역이 존재할 수 있습니다.
+
+그런 다음 추출된 각 종양 영역을 128 * 128 해상도로 겹치지 않는 정사각형 patch로 자르고 공백 비율이 0.3보다 큰 patch는 필터링합니다.
+
+마지막으로 각 WSI에 대해 무작위로 샘플링된 10개(N)의 patch로 가방을 구성하고, 가방에 그룹화할 수 없는 남은 patch는 폐기합니다.
+
+실험에 사용된 23가지 임상 특성은 나이(수치), 종양 크기(수치), ER(범주형), PR(범주형), HER2(범주형)등 이며, 이는 clinical_info.xlsx 데이터셋에서 확인할 수 있습니다.
+
+## [모델 테스트]
+
+위에서 언급했듯이 WSI는 여러 개의 가방으로 나뉘며, 각 가방은 예측 확률을 얻기 위해 MIL 모델에 입력됩니다. 따라서 테스트 중에 WSI의 종합적인 예측 결과를 얻기 위해 모든 백의 평균 예측 확률을 계산하여 "결과 병합"을 수행합니다.
+<div align="center">
+    <img src="imgs/b.png" alt="c"/>
+</div>
+
+
+## [평가 방법]
+
+- Macro F1 Score로 결과를 평가합니다.
+- Early Stopping F1 Score는 0.95로 합니다. 
+
+---
+
+## [Setup]
 
 ### Clone this repo
 
 ```bash
-git clone https://github.com/bupt-ai-cz/BALNMP.git
+$ git clone https://github.com/zivary/DACON_AI_competition_for_predicting_Lymph_node_metastasis_of_breast_cancer.git
 ```
 
 ### Environment
@@ -35,124 +76,34 @@ git clone https://github.com/bupt-ai-cz/BALNMP.git
 Create environment and install dependencies.
 
 ```bash
-conda create -n BALNMP python=3.6 -y
-conda activate BALNMP
-pip install -r code/requirements.txt
+$ conda create -n env python=3.8 -y
+$ conda activate env
+$ pip install -r ./code/requirements.txt
 ```
 
-### Dataset
+### Data Preparation
 
-For your convenience, we have provided preprocessed clinical data in `code/dataset`, please download the processed WSI patches from [here](https://drive.google.com/file/d/1wY5KIVixdwzZZq2m0IoqmBLp0YlwBAz6/view?usp=sharing) and unzip them by the following scripts:
-
-```bash
-cd code/dataset
-# download paper_patches.zip
-unzip paper_patches.zip
+```text
+code/Data_Preparation.ipynb
 ```
 
-## Training
+### MIL Modeling
 
-Our codes have supported the following experiments, whose results have been presented in our [paper and supplementary material](https://arxiv.org/abs/2112.02222).
-
-> experiment_index:
-> 
-> 0. N0 vs N+(>0)
-> 1. N+(1-2) vs N+(>2)
-> 2. N0 vs N+(1-2) vs N+(>2)
-> 3. N0 vs N+(1-2)
-> 4. N0 vs N+(>2)
-
-To run any experiment, you can do as this:
-
-```bash
-cd code
-bash run.sh ${experiment_index}
+```text
+code/MIL.ipynb
 ```
 
-Furthermore, if you want to try other settings, please see `train.py` for more details.
+## [결과]
 
-## Paper results
+결과적으로 공유된 Baseline의 결과 수준의 F1 스코어에 근접한 수준의 모델을 만드는 것에 만족해야 했습니다.
 
-The results in our paper are computed based on the [cut-off value in ROC](https://en.wikipedia.org/wiki/Youden%27s_J_statistic#:~:text=Youden%27s%20index%20is,as%20informedness.%5B3%5D). For your convenient reference, we have recomputed the classification results with argmax prediction rule, where the threshold for binary classification is 0.5, and the detailed recomputed results are [here](./recompute_results.md).
+Crop 이미지의 크기조정, 배경 노이즈 제거, 이미지 증식,  다양한 학습모델 사용, 서로 다른 형식의 MIL 적용 등 여러 가지 방식의 시도를 해보았지만 뚜렷하게 학습 결과를 향상하는 방법을 찾지 못했습니다.
 
-### The performance in prediction of ALN status (N0 vs. N(+))
+만족할 만한 결과를 얻지 못했지만, Git-Hub에 공개된 여러 논문들 이해하여 우리의 데이터에 맞춰 적용해 보고, 딥러닝 모델을 학습시켜 원하는 방식의 답을 얻어보는 뜻깊은 프로젝트였습니다. 또 프로젝트 과정에서 접해보지 못했던 다양한 Python 라이브러리들을 경험해 볼 수 있었습니다. 
 
-<div align="center">
-    <img src="imgs/N0 vs. N(+).png" alt="N0 vs. N(+)"/>
-</div>
+---
 
-### The performance in prediction of ALN status (N0 vs. N + (1-2))
-
-<div align="center">
-    <img src="imgs/N0 vs. N + (1-2).png" alt="N0 vs. N + (1-2)"/>
-</div>
-
-### The performance in prediction of ALN status (N0 vs. N + (>2))
-
-<div align="center">
-    <img src="imgs/N0 vs. N + (＞2).png" alt="N0 vs. N + (＞2)"/>
-</div>
-
-## Implementation details
-
-### Data preparation
-
-In our all experiments, the patch number (*N*) of each bag is fixed as 10, however, the bag number (*M*) for each WSI is not fixed and is dependent on the resolution of a WSI. According to our statistical results, the bag number (*M*) of WSIs varies from 1 to 300, which is not fixed for a WSI during training and testing. The process of dataset preparation is shown in the following figure, and the details are as follows:
-
-- Firstly, we cut out annotated tumor regions for each WSI, and there may exist multiple annotated tumor regions in a WSI.
-
-- Then, each extracted tumor region is cropped into amounts of non-overlapping square patches with a resolution of 256 \* 256, and patches with a blank ratio greater than 0.3 are filtered out.
-
-- Finally, for each WSI, a bag is composed of randomly sampled 10 (*N*) patches, and the left patches which can not be grouped into a bag will be discarded.
-
-The 5 clinical characteristics used in our experiments are age (numerical), tumor size (numerical), ER (categorical), PR (categorical), and HER2 (categorical), which are provided in our BCNB Dataset, and you can access them from our [BCNB Dataset](https://bupt-ai-cz.github.io/BCNB/).
-
-<div align="center">
-    <img src="imgs/a.png" alt="a"/>
-</div>
-
-### Model testing
-
-As mentioned above, a WSI is split into multiple bags, and each bag is inputted into the MIL model to obtain predicted probabilities. So for obtaining the comprehensive predicted results of a WSI during testing, we compute the average predicted probabilities of all bags to achieve "Result Merging".
-
-<div align="center">
-    <img src="imgs/c.png" alt="c"/>
-</div>
-
-## Demo software
-
-We have also provided software for easily checking the performance of our model to predict ALN metastasis.
-
-Please download the software from [here](https://drive.google.com/drive/folders/18f0rEmV3dfdZsnFY2mfbF-MMtk9JkjZY?usp=sharing), and check the `README.txt` for usage. Please note that this software is only used for demo, and it cannot be used for other purposes.
-
-<div align="center">
-    <img src="imgs/demo-software.png" alt="demo-software" height="25%" width="25%" />
-</div>
-
-## Citation
-
-If this work helps your research, please cite this paper in your publications.
-
-```
-@article{xu2021predicting,
-  title={Predicting axillary lymph node metastasis in early breast cancer using deep learning on primary tumor biopsy slides},
-  author={Xu, Feng and Zhu, Chuang and Tang, Wenqi and Wang, Ying and Zhang, Yu and Li, Jie and Jiang, Hongchuan and Shi, Zhongyue and Liu, Jun and Jin, Mulan},
-  journal={Frontiers in oncology},
-  volume={11},
-  pages={759007},
-  year={2021},
-  publisher={Frontiers Media SA}
-}
-```
-
-## Contact
-
-If you encounter any problems, please open an issue without hesitation, and you can also contact us with the following:
-
-- email: tangwenqi@bupt.edu.cn, czhu@bupt.edu.cn, drxufeng@mail.ccmu.edu.cn
-
-## Acknowledgements
-
-This project is based on the following open-source projects. We thank their authors for making the source code publically available.
-
-- [AttentionDeepMIL](https://github.com/AMLab-Amsterdam/AttentionDeepMIL)
+## [참조]
+이 프로젝트는 해당 오픈소스 프로젝트 기반으로 작성했습니다. 소스 코드를 공개해 주신 작성자에게 감사드립니다.
+- https://github.com/bupt-ai-cz/BALNMP
+- https://github.com/AMLab-Amsterdam/AttentionDeepMIL

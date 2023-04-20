@@ -1,13 +1,12 @@
 import os
-# from PIL import Image
 import cv2
+import json
 import torch
-# import torchvision
 import albumentations as A 
 from albumentations.pytorch.transforms import ToTensorV2  # 이미지 tenser화
 from tqdm.auto import tqdm
-import json
-# import pandas as pd
+
+
 
 # from base line in DACON
 transform = A.Compose(
