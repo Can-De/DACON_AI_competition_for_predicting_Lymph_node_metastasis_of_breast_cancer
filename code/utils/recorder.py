@@ -1,6 +1,5 @@
-import pandas as pd
 import os
-
+import pandas as pd
 
 class Recoder:
     """Record predicted scores of patients and attention value of each patch during training"""
